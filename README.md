@@ -1,1 +1,2 @@
 # PrioritySchedulingAlgorithm_JavaFX
+使用JavaFX构建的图形界面，能模拟处理机的优先级调度算法。
