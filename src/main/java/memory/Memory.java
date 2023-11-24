@@ -15,6 +15,7 @@ public class Memory {
 
     private Integer[] memorySituation = new Integer[64];
 
+
     public Memory() {
         for (int i = 0; i < memorySituation.length; i++) {
             memorySituation[i] = 0;
