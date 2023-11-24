@@ -2,89 +2,54 @@ package pcb;
 
 import process.Process;
 
-public class PCB implements Comparable{
-    private  int id;
-    private  double space;
-    private long runTime;
-    private long IOTime;
-    private PCB front_PCB;
-    private PCB back_PCB;
+public class PCB {
+    private int id;
     private Process process;
-    private int priority;
+    private Integer memory;
+    private Integer memoryStart;
 
     public PCB() {}
 
-    public PCB(int id, Process process) {
-        this.id = id;
-        this.space = 1000.0;
-        this.runTime = 0;
-        this.IOTime = 0;
+    public PCB(Process process, Integer memoryStart) {
+        try {
+            this.id = process.getId();
+        } catch (Exception e) {
+            this.id = -1;
+        }
         this.process = process;
-        this.priority = process.getPresetPriority();
+        this.memory = process.getMemory();
+        this.memoryStart = memoryStart;
     }
 
-    public PCB(int id,Process process, double space) {
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
         this.id = id;
-        this.space = space;
-        this.runTime = 0;
-        this.IOTime = 0;
-        this.process = process;
-        this.priority = process.getPresetPriority();
-    }
-
-    public PCB getFront_PCB() {
-        return front_PCB;
-    }
-
-    public void setFront_PCB(PCB front_PCB) {
-        this.front_PCB = front_PCB;
-    }
-
-    public PCB getBack_PCB() {
-        return back_PCB;
-    }
-
-    public void setBack_PCB(PCB back_PCB) {
-        this.back_PCB = back_PCB;
     }
 
     public Process getProcess() {
         return process;
     }
 
-    public long getRunTime() {
-        return runTime;
+    public void setProcess(Process process) {
+        this.process = process;
     }
 
-    public void setRunTime(long runTime) {
-        this.runTime = runTime;
+    public Integer getMemory() {
+        return memory;
     }
 
-    public long getIOTime() {
-        return IOTime;
+    public void setMemory(Integer memory) {
+        this.memory = memory;
     }
 
-    public void setIOTime(long IOTime) {
-        this.IOTime = IOTime;
+    public Integer getMemoryStart() {
+        return memoryStart;
     }
 
-    @Override
-    public int compareTo(Object o) {
-        if (o instanceof PCB)
-        {
-            // 使用成员变量 value 进行比较
-            if (this.priority < ((PCB) o).priority) {
-                return -1;
-            } else if (this.priority > ((PCB) o).priority) {
-                return 1;
-            } else {
-                return 0;
-            }
-        }
-        return 0;
-    }
-
-    public int getPriority() {
-        return priority;
+    public void setMemoryStart(Integer memoryStart) {
+        this.memoryStart = memoryStart;
     }
 }

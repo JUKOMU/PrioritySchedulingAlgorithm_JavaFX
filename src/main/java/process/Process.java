@@ -3,152 +3,112 @@ package process;
 
 import pcb.PCB;
 
-import static process.ProcessManager.*;
+import java.util.Objects;
 
 /**
  * 进程类
  * id，name，优先级，实时优先级，模拟运行时间，状态
  * 运行时间：CPU时间 + IO时间
  */
-public class Process {
-    static final int READY = 0;
-    static final int RUNNING = 1;
-    static final int BLOCKED = 2;
-    static final int ENDED = 3;
-    static final int MAX_PRIORITY = 10;
-    static final int MIN_PRIORITY = 0;
-    static final int NOT_IO = 0;
-    static final int IO = 1;
-    private int id;
-    private  String name;
-    private  int presetPriority;
-    private int realTimePriority;
-    private  long presetRuntime;
-    private  int IOOperation;
-    private  long presetIOTime;
-    private int status;
-    private PCB PCB;
-    private ProcessThread t;
+public class Process implements Comparable<Process> {
+    static final Integer BACKED = -1;
+    static final Integer READY = 0;
+    static final Integer RUNNING = 1;
+    static final Integer ENDED = 2;
+    static final Integer MAX_PRIORITY = 1000;
+    static final Integer MIN_PRIORITY = 0;
+    private Integer id;
+    private String name;
+    private Integer priority;
+    private Integer runtime;
+    private Integer status;
+    private Integer memory;
+    private PCB PCB; // 内存信息在PCB中
 
     public Process() {
     }
 
-    void initialize() {
-    }
-    Process(String name, int presetPriority, long presetRuntime) {
+    public Process(String name, Integer priority, Integer runtime, Integer memory) {
         this.name = name;
-        this.presetPriority = presetPriority;
-        this.realTimePriority = presetPriority;
-        this.presetRuntime = presetRuntime;
-        this.status = READY;
-        this.IOOperation = NOT_IO;
-        this.presetIOTime = 0;
+        this.priority = priority;
+        this.runtime = runtime;
+        this.status = -1;
+        this.memory = memory;
+        this.PCB = new PCB();
     }
 
-    Process(String name, int presetPriority, long presetRuntime, long presetIOTime) {
-        this.name = name;
-        this.presetPriority = presetPriority;
-        this.realTimePriority = presetPriority;
-        this.presetRuntime = presetRuntime;
-        this.status = READY;
-        this.IOOperation = IO;
-        this.presetIOTime = presetIOTime;
-    }
-
-    /**
-     * 进程运行
-     * 记录开始时间
-     * 包含一个线程更新进程状态
-     */
-    void run() {
-        this.t = new ProcessThread(this);
-        t.start();
-    }
-    void end() throws InterruptedException {
-        this.PCB.setRunTime(presetRuntime);
-        this.PCB.setIOTime(presetIOTime);
-        Thread t = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                endRunningSignal();
-            }
-        });
-        t.start();
-
-    }
-    void interrupt() {
-        saveScene();
-        this.status = READY;
-        t.interrupted = true;
-        t.interrupt();
-        long runTime = t.runTime;
-        PCB.setRunTime(runTime);
-    }
-    void saveScene() {
-        this.status = READY;
-    }
-    void setBlocked() {
-        interrupt();
-        this.status = BLOCKED;
-        blockSignal(this);
-    }
-    void signal() {
-
-    }
-    void wakeUp() {
-
-    }
-
-    int getId() {
+    public Integer getId() {
         return id;
     }
-    void setId(int id) {
+
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    String getName() {
+    public String getName() {
         return name;
     }
 
-    public int getPresetPriority() {
-        return presetPriority;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    int getRealTimePriority() {
-        return realTimePriority;
+    public Integer getPriority() {
+        return priority;
     }
 
-    void setRealTimePriority(int realTimePriority) {
-        this.realTimePriority = realTimePriority;
+    public void setPriority(Integer priority) {
+        this.priority = priority;
     }
 
-    long getPresetRuntime() {
-        return presetRuntime;
+    public Integer getRuntime() {
+        return runtime;
     }
 
-    int getStatus() {
+    public void setRuntime(Integer runtime) {
+        this.runtime = runtime;
+    }
+
+    public Integer getStatus() {
         return status;
     }
 
-    pcb.PCB getPCB() {
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public Integer getMemory() {
+        return memory;
+    }
+
+    public void setMemory(Integer memory) {
+        this.memory = memory;
+    }
+
+    public pcb.PCB getPCB() {
         return PCB;
     }
 
-    void setPCB(pcb.PCB PCB) {
+    public void setPCB(pcb.PCB PCB) {
         this.PCB = PCB;
     }
 
-    int getIO() {
-        return IOOperation;
+
+    public void runtimeChangBy(Integer t) {
+        this.runtime += t;
     }
 
-    public long getPresetIOTime() {
-        return presetIOTime;
+    public void priorityChangBy(Integer t) {
+        this.priority += t;
     }
 
-
-    public void init() {
-        this.t = null;
+    /**
+     * 按降序排序
+     * @param o the object to be compared.
+     * @return
+     */
+    @Override
+    public int compareTo(Process o) {
+        return o.getPriority() - this.getPriority();
     }
 }

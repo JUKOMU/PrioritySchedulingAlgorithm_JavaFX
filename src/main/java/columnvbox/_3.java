@@ -1,75 +1,124 @@
 package columnvbox;
 
-import javafx.geometry.Insets;
-import javafx.scene.control.ListView;
+import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
-import pcb.PCB;
+import javafx.scene.text.Font;
+import memory.Memory;
+import process.Process;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.List;
 
-import static app.MainApp.createListView;
 
+/**
+ * 内存
+ */
 public class _3 extends VBox {
-    private final ListView<VBox> listViewTop;
-    private final ArrayList<ListViewItem> listViewTopItems;
-    private final ListView<VBox> listViewBottom;
-    private final ArrayList<ListViewItem> listViewBottomItems;
-    public _3() {
-        // 创建上半部分
-        VBox topSection = createListView("就绪队列");
-        // 创建列表
-        listViewTop = new ListView<>();
-        listViewTop.setPrefHeight(400);
-        listViewTopItems = new ArrayList<>();
-        listViewTop.setPadding(new Insets(1,10,1,1));
-        topSection.getChildren().addAll(listViewTop);
+    private TableView<ObservableList<String>> tableView = new TableView<>();
+    // 创建表格列
+    TableColumn<ObservableList<String>, String> rowColumn = new TableColumn<>("Row");
+    TableColumn<ObservableList<String>, String> pidColumn = new TableColumn<>("PID");
+    TableColumn<ObservableList<String>, String> statusColumn = new TableColumn<>("Status");
+    TableColumn<ObservableList<String>, String> usageColumn = new TableColumn<>("占用内存");
+    ObservableList<ObservableList<String>> data;
 
-        // 创建下半部分
-        VBox bottomSection = createListView("挂起队列");
-        // 创建列表
-        listViewBottom = new ListView<>();
-        listViewBottom.setPrefHeight(400);
-        listViewBottomItems = new ArrayList<>();
-        listViewBottom.setPadding(new Insets(1,10,1,1));
-        bottomSection.getChildren().addAll(listViewBottom);
+    private Memory memory;
+    public _3(Memory memory) {
+        this.memory = memory;
+        // 将列添加到表格中
+        tableView.getColumns().addAll(rowColumn, pidColumn, statusColumn, usageColumn);
 
-        // 布局整体结构
-        this.setPadding(new Insets(5,0,0,0));
-        this.getChildren().addAll(topSection,bottomSection);
+        // 初始化数据
+        data = FXCollections.observableArrayList();
+        for (int i = 0; i < 64; i++) {
+            ObservableList<String> row = FXCollections.observableArrayList(
+                    String.valueOf(i + 1), "", "", "");
+            data.add(row);
+        }
+
+        // 将数据设置到表格中
+        tableView.setItems(data);
+        VBox.setVgrow(tableView, javafx.scene.layout.Priority.ALWAYS);
+
+        // 设置每列的单元格工厂
+        rowColumn.setCellValueFactory(param -> Bindings.stringValueAt(param.getValue(), 0));
+        pidColumn.setCellValueFactory(param -> Bindings.stringValueAt(param.getValue(), 1));
+        statusColumn.setCellValueFactory(param -> Bindings.stringValueAt(param.getValue(), 2));
+        usageColumn.setCellValueFactory(param -> Bindings.stringValueAt(param.getValue(), 3));
+        // 设置状态列的单元格工厂
+        statusColumn.setCellFactory(column -> new TableCell<ObservableList<String>, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (item == null || empty) {
+                    setText(null);
+                    setStyle(""); // 清空样式
+                } else {
+                    setText(item);
+
+                    // 根据状态值设置颜色样式
+                    if (item.equals("运行")) {
+                        setStyle("-fx-background-color: rgba(255,83,83,0.82); -fx-text-fill: #000000;");
+                    } else if (item.equals("占用")) {
+                        setStyle("-fx-background-color: rgba(255,255,115,0.81); -fx-text-fill: black;");
+                    } else {
+                        setStyle("-fx-background-color: rgba(133,255,133,0.71); -fx-text-fill: black;"); // 清空样式
+                    }
+                }
+            }
+        });
+        Label label = new Label("内存");
+        label.setFont(new Font(25));
+        this.getChildren().addAll(label, tableView);
+        refreshTableView();
     }
 
-    public void addListViewTopItem(ListViewItem item) {
-        listViewTopItems.add(item);
-        item.prefWidthProperty().bind(this.prefWidthProperty());
-        Collections.sort(listViewTopItems);
-        refreshTop();
+    private String getStatusString(int statusValue) {
+        // 根据实际需要进行映射
+        if (statusValue == 0) {
+            return "占用";
+        } else if (statusValue == 1) {
+            return "运行";
+        } else {
+            return "空闲";
+        }
     }
-    public void removeListViewTopItem(ListViewItem item) {
-        listViewTopItems.remove(item);
-    }
-    public void removeListViewBottomItem(ListViewItem item) {
-        listViewBottomItems.remove(item);
-    }
-    public void refreshTop() {
-        listViewTop.getItems().clear();
-        listViewTop.getItems().addAll(listViewTopItems);
-    }
-    public void addListViewBottomItem(ListViewItem item) {
-        listViewBottomItems.add(item);
-        item.prefWidthProperty().bind(this.prefWidthProperty());
-        refreshBottom();
+    // 修改指定行的PID和状态
+    public void updateRowData(int rowIndex, String newPid, String newStatus, String usage) {
+        ObservableList<String> row = tableView.getItems().get(rowIndex);
+        row.set(1, newPid); // 更新PID
+        row.set(2, newStatus); // 更新状态
+        row.set(3, usage); //
     }
 
-    public void refreshBottom() {
-        listViewBottom.getItems().clear();
-        listViewBottom.getItems().addAll(listViewBottomItems);
-    }
-
-    public ListViewItem removeFirstListViewTopItem() {
-        ListViewItem item = listViewTopItems.get(0);
-        listViewTopItems.remove(0);
-        refreshTop();
-        return item;
+    public void refreshTableView() {
+        try {
+            for (int i = 0; i < 64; i++) {
+                ObservableList<String> row = FXCollections.observableArrayList(
+                        String.valueOf(i + 1), "", "", "");
+                data.set(i, row);
+            }
+            List<Process> loadingQueue = memory.getLoadingQueue();
+            for (Process p : loadingQueue) {
+                String name = p.getName();
+                //System.out.println(name);
+                String status = getStatusString(p.getStatus());
+                int memoryUsage = p.getMemory();
+                int memoryBegin = p.getPCB().getMemoryStart();
+                for (int i = memoryBegin; i < memoryBegin + memoryUsage; i++) {
+                    if (i == memoryBegin){
+                        updateRowData(i, name, status,""+memoryUsage);
+                    } else {
+                        updateRowData(i, "", status, "");
+                    }
+                }
+            }
+        } catch (Exception e) {}
     }
 }
