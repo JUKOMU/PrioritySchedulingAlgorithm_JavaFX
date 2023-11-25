@@ -42,6 +42,8 @@ public class MainApp extends Application {
 
     private boolean ReadyToRunning = false; // 是否可以让进程进入CPU
 
+    private Timer timer = new Timer();
+
 
 
     public static void main(String[] args) {
@@ -100,14 +102,13 @@ public class MainApp extends Application {
         _1.unsuspendButton.setOnAction(event -> setUnsuspendButton());
 
         // 设置定时任务
-        Timer timer = new Timer();
+        // 调度主逻辑
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 if (scheduling){
-                    _2.setInfo("调度中");
                     /**
-                     * CPU
+                     * CPU调度逻辑
                      */
                     if (_2.isRunningNotEmpty) {
                         // CPU有进程占用
@@ -176,9 +177,10 @@ public class MainApp extends Application {
                     }
                 } else {
                     _2.setInfo("停止");
+                    _3.refreshTableView();
                 }
             }
-        }, 1000, 1200);
+        }, 1000, 1100);
     }
 
     private void runProcess() {
@@ -403,5 +405,12 @@ public class MainApp extends Application {
 
         // Show the process window
         processStage.showAndWait();
+    }
+
+    @Override
+    public void stop() throws Exception {
+        // 关闭程序，关闭计时器
+        super.stop();
+        timer.cancel();
     }
 }

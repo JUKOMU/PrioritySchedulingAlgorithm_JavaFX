@@ -3,6 +3,7 @@ package columnvbox;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -54,12 +55,15 @@ public class _4 extends VBox {
         Label label1 = new Label("完成队列");
         Label label2 = new Label("挂起队列");
         label1.setFont(new Font(25));
+        label1.setPadding(new Insets(10, 10, 10, 10));
         label2.setFont(new Font(25));
+        label2.setPadding(new Insets(10, 10, 10, 10));
 
         this.getChildren().addAll(label1, tableView1, label2, tableView2);
         refreshTableView1();
         refreshTableView2();
     }
+
     public void refreshTableView1() {
         processList1 = FXCollections.observableArrayList(completionQueue.getCompletionQueue());
         Platform.runLater(() -> tableView1.setItems(processList1));
@@ -68,4 +72,5 @@ public class _4 extends VBox {
         processList2 = FXCollections.observableArrayList(suspendQueue.getSuspendQueue());
         Platform.runLater(() -> tableView2.setItems(processList2));
     }
+
 }

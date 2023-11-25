@@ -18,7 +18,7 @@ public class ReadyQueue {
     }
 
     /**
-     * 只对列表进行操作，仅由主线程调用，剩余主存是否支持操作由主线程判断
+     * 只对列表进行操作，仅由主线程调用，同时判断剩余主存是否支持
      * @param process
      * @return
      */
@@ -46,12 +46,13 @@ public class ReadyQueue {
         return readyQueue;
     }
 
-    public void deleteProcess(Process process) {
+    public boolean deleteProcess(Process process) {
         try {
             readyQueue.remove(process);
             sortReadyQueue();
+            return true;
         } catch (Exception e) {
-
+            return false;
         }
     }
 }

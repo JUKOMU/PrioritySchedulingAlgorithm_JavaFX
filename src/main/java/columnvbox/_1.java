@@ -51,6 +51,7 @@ public class _1 extends VBox {
      * 设置列表字段，绑定属性
      */
     public _1() {
+        gridPane.setPadding(new Insets(10, 10, 10, 10));
         gridPane.add(startButton,0,0);
         gridPane.add(pauseButton,1,0);
         gridPane.add(addJobButton,0,1);
@@ -74,6 +75,7 @@ public class _1 extends VBox {
         // 添加按钮和表格到 VBox
         Label label1 = new Label("后备队列");
         label1.setFont(new Font(25));
+        label1.setPadding(new Insets(10, 10, 10, 10));
         this.getChildren().addAll(gridPane, label1, tableView);
         startButton.setOnAction(event -> setOnStartButton());
         addJobButton.setOnAction(event -> setAddJobButton());

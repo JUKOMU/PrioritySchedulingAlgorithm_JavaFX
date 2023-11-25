@@ -1,8 +1,10 @@
 package columnvbox;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -14,11 +16,14 @@ import process.Process;
 
 import java.util.List;
 
+import static columnvbox._2.updateData;
+
 
 /**
  * 内存
  */
 public class _3 extends VBox {
+    Label memorySituation = new Label("内存");
     private TableView<ObservableList<String>> tableView = new TableView<>();
     // 创建表格列
     TableColumn<ObservableList<String>, String> rowColumn = new TableColumn<>("Row");
@@ -73,9 +78,10 @@ public class _3 extends VBox {
                 }
             }
         });
-        Label label = new Label("内存");
-        label.setFont(new Font(25));
-        this.getChildren().addAll(label, tableView);
+
+        memorySituation.setFont(new Font(25));
+        memorySituation.setPadding(new Insets(10, 10, 10, 10));
+        this.getChildren().addAll(memorySituation, tableView);
         refreshTableView();
     }
 
@@ -97,7 +103,30 @@ public class _3 extends VBox {
         row.set(3, usage); //
     }
 
+    /**
+     * 显示内存占用
+     */
+    public void showMemorySituation() {
+        int percentage = calculatePercentage(memory.getMemorySituation());
+        Platform.runLater(() ->memorySituation.setText("内存 (" + percentage + "%)"));
+        updateData(percentage);
+    }
+
+    private static int calculatePercentage(Integer[] array) {
+        int countOnes = 0;
+
+        for (Integer value : array) {
+            if (value == 1) {
+                countOnes++;
+            }
+        }
+
+        int percentage = countOnes * 100 / array.length;
+        return percentage;
+    }
+
     public void refreshTableView() {
+        showMemorySituation();
         try {
             for (int i = 0; i < 64; i++) {
                 ObservableList<String> row = FXCollections.observableArrayList(

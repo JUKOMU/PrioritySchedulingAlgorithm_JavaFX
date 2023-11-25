@@ -5,7 +5,6 @@ import process.Process;
 import queue.ReadyQueue;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Memory {
@@ -28,6 +27,18 @@ public class Memory {
             memorySituation[i] = 1;
         }
         loadedProcess.add(OS);
+    }
+
+    public List<Process> getReadyQueue() {
+        return readyQueue.getReadyQueue();
+    }
+
+    public List<Process> getLoadingQueue() {
+        return loadedProcess;
+    }
+
+    public Integer[] getMemorySituation() {
+        return memorySituation;
     }
 
     /**
@@ -139,14 +150,6 @@ public class Memory {
         return -1;
     }
 
-    public List<Process> getReadyQueue() {
-        return readyQueue.getReadyQueue();
-    }
-
-    public List<Process> getLoadingQueue() {
-        return loadedProcess;
-    }
-
     /**
      * 让进程退出就绪队列
      * 进程挂起或加入CPU
@@ -155,17 +158,18 @@ public class Memory {
      */
     public void removeReadyProcess(Process process) {
         String str = process.getName();
-        readyQueue.deleteProcess(process);
-        System.out.println("Memory:进程" + str + "退出就绪队列");
+        if (readyQueue.deleteProcess(process)){
+            System.out.println("Memory:进程" + str + "退出就绪队列");
+        }
     }
 
     public void removeRunningProcess(Process process) {
         String str = process.getName();
         try {
-            loadedProcess.remove(process);
-            freeMemory(process);
-            System.out.println("Memory:进程" + str + "退出内存");
             removeReadyProcess(process);
+            loadedProcess.remove(process);
+            System.out.println("Memory:进程" + str + "退出内存");
+            freeMemory(process);
         } catch (Exception e) {
 
         }
@@ -178,7 +182,7 @@ public class Memory {
         for (int i = memoryBegin; i < memoryBegin + memoryUsage; i++) {
             memorySituation[i] = 0;
         }
-        System.out.println("Memory: 进程" + name + "内存已释放," + memoryUsage + "KB");
+        System.out.println("Memory:进程" + name + "内存已释放," + memoryUsage + "KB");
     }
 
     /**
@@ -187,4 +191,5 @@ public class Memory {
     public void reAddReadyProcess(Process process) {
         readyQueue.addReadyProcess(process);
     }
+
 }
