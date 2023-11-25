@@ -5,4 +5,6 @@ open module jukomu.priorityschedulingalgorithm {
     requires java.sql;
     requires druid;
     requires java.naming;
+    requires mysql.connector.java;
+    requires lombok;
 }

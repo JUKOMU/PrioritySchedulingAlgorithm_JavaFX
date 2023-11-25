@@ -57,7 +57,10 @@ public class _4 extends VBox {
         label1.setPadding(new Insets(10, 10, 10, 10));
         label2.setFont(new Font(25));
         label2.setPadding(new Insets(10, 10, 10, 10));
-
+        // 设置列的自适应宽度策略
+        tableView1.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        // 设置列的自适应宽度策略
+        tableView2.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         this.getChildren().addAll(label1, tableView1, label2, tableView2);
         refreshTableView1();
         refreshTableView2();

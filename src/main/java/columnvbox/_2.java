@@ -37,7 +37,7 @@ public class _2 extends VBox {
     /**
      * 内存占用折线图
      */
-    private static final int MAX_DATA_POINTS = 10;
+    private static final int MAX_DATA_POINTS = 30;
     private static int xSeriesData = 0;
     private static XYChart.Series<Number, Number> series;
 
@@ -64,6 +64,8 @@ public class _2 extends VBox {
         memoryColumn.setCellValueFactory(new PropertyValueFactory<>("memory"));
         // 将列添加到表格
         tableView.getColumns().addAll(nameColumn, priorityColumn, runtimeColumn, memoryColumn);
+        // 设置列的自适应宽度策略
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         // 创建 Process 对象的列表
         processList = FXCollections.observableArrayList();
         // 添加按钮和表格到 VBox

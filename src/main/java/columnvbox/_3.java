@@ -81,6 +81,8 @@ public class _3 extends VBox {
 
         memorySituation.setFont(new Font(25));
         memorySituation.setPadding(new Insets(10, 10, 10, 10));
+        // 设置列的自适应宽度策略
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         this.getChildren().addAll(memorySituation, tableView);
         refreshTableView();
     }

@@ -1,15 +1,17 @@
 package queue;
 
+import lombok.Getter;
 import process.Process;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class SuspendQueue {
-    private List<Process> suspendQueue;
+    private final List<Process> suspendQueue;
 
     public SuspendQueue() {
-        suspendQueue = new ArrayList<Process>();
+        suspendQueue = new ArrayList<>();
     }
 
     public boolean addSuspendProcess(Process process) {
@@ -26,14 +28,10 @@ public class SuspendQueue {
         return false;
     }
 
-    public List<Process> getSuspendQueue() {
-        return suspendQueue;
-    }
-
     public void removeSuspendProcess(Process process) {
         try {
             suspendQueue.remove(process);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
 
         }
     }

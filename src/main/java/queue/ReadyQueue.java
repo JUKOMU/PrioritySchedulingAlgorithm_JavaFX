@@ -1,5 +1,6 @@
 package queue;
 
+import lombok.Getter;
 import process.Process;
 
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.List;
  * 就绪队列
  * 存储就绪进程
  */
+@Getter
 public class ReadyQueue {
     private final List<Process> readyQueue;
 
@@ -38,10 +40,6 @@ public class ReadyQueue {
 
     public void sortReadyQueue() {
         Collections.sort(readyQueue);
-    }
-
-    public List<Process> getReadyQueue() {
-        return readyQueue;
     }
 
     public boolean deleteProcess(Process process) {

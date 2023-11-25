@@ -4,6 +4,8 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
@@ -55,15 +57,37 @@ public class _1 extends VBox {
         gridPane.add(suspendButton,1,2);
         gridPane.add(unsuspendButton,0,3);
         gridPane.add(clearBackQueueButton,1,3);
+        gridPane.setAlignment(Pos.CENTER); // 设置GridPane中内容居中
+        // 设置按钮之间的水平和垂直间距
+        gridPane.setHgap(70); // 设置水平间距为10像素
+        gridPane.setVgap(10); // 设置垂直间距为10像素
+        // 设置列约束，使列中的元素居中
+        for (int i = 0; i < 2; i++) {
+            gridPane.getColumnConstraints().add(i, new javafx.scene.layout.ColumnConstraints());
+            gridPane.getColumnConstraints().get(i).setHalignment(javafx.geometry.HPos.CENTER);
+        }
+        for (Node i :gridPane.getChildren()) {
+            i.setStyle("-fx-min-width: 100px; -fx-min-height: 40px; -fx-pref-width: 120px; -fx-pref-height: 40px; -fx-max-width: 140px; -fx-max-height: 40px; -fx-background-color: #6db2ff; -fx-border-radius: 10px; -fx-background-radius: 10px; ");
+            // 设置按钮在点击时的样式
+            i.setOnMousePressed(e -> i.setStyle("-fx-background-color: #ffffff;-fx-min-width: 100px; -fx-min-height: 40px; -fx-pref-width: 120px; -fx-pref-height: 40px; -fx-max-width: 140px; -fx-max-height: 40px; -fx-border-radius: 10px; -fx-background-radius: 10px;"));
+            // 设置按钮在释放鼠标时的样式
+            i.setOnMouseReleased(e -> i.setStyle("-fx-min-width: 100px; -fx-min-height: 40px; -fx-pref-width: 120px; -fx-pref-height: 40px; -fx-max-width: 140px; -fx-max-height: 40px; -fx-background-color: #6db2ff; -fx-border-radius: 10px; -fx-background-radius: 10px;"));
+
+        }
+
         // 设置列与实体类属性的关联
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         priorityColumn.setCellValueFactory(new PropertyValueFactory<>("priority"));
         runtimeColumn.setCellValueFactory(new PropertyValueFactory<>("runtime"));
         memoryColumn.setCellValueFactory(new PropertyValueFactory<>("memory"));
 
+
+
         backgroundQueue = new BackQueue();
         // 将列添加到表格
         tableView.getColumns().addAll(nameColumn, priorityColumn, runtimeColumn, memoryColumn);
+        // 设置列的自适应宽度策略
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         VBox.setVgrow(tableView, javafx.scene.layout.Priority.ALWAYS);
         // 创建 Process 对象的列表
         processList = FXCollections.observableArrayList();
