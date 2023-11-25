@@ -11,7 +11,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import process.Process;
-import queue.BackQueue;
 import queue.CompletionQueue;
 import queue.SuspendQueue;
 

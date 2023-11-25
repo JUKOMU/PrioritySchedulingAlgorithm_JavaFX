@@ -4,19 +4,14 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 import process.Process;
 import queue.BackQueue;
 
-import java.util.List;
 import java.util.Random;
 
 import static app.MainApp.setScheduling;
@@ -186,12 +181,4 @@ public class _1 extends VBox {
         refreshTableView();
     }
 
-    /**
-     * 从后备队列退出一个进程
-     * @param process
-     */
-    public void deleteBackProcess(Process process) {
-        backgroundQueue.removeBackProcess(process);
-        refreshTableView();
-    }
 }

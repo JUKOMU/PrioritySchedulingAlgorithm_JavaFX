@@ -8,7 +8,6 @@ import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -38,11 +37,11 @@ public class MainApp extends Application {
     private Memory memory;
     private static boolean scheduling = false; // 调度开始的标志
 
-    private static int allocateFit = 1; // 设置适应算法，0最先适应算法，1最优适应算法
+    private static final int allocateFit = 1; // 设置适应算法，0最先适应算法，1最优适应算法
 
     private boolean ReadyToRunning = false; // 是否可以让进程进入CPU
 
-    private Timer timer = new Timer();
+    private final Timer timer = new Timer();
 
 
 
@@ -52,7 +51,7 @@ public class MainApp extends Application {
 
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         this.memory = new Memory();
 
         primaryStage.setTitle("CPU调度");
@@ -107,8 +106,8 @@ public class MainApp extends Application {
             @Override
             public void run() {
                 if (scheduling){
-                    /**
-                     * CPU调度逻辑
+                    /*
+                      CPU调度逻辑
                      */
                     if (_2.isRunningNotEmpty) {
                         // CPU有进程占用
@@ -139,8 +138,8 @@ public class MainApp extends Application {
                     } else {
                         ReadyToRunning = true;
                     }
-                    /**
-                     * 就绪队列
+                    /*
+                      就绪队列
                      */
                     if (ReadyToRunning) {
                         try {// CPU为空，进程进入CPU运行
@@ -153,10 +152,10 @@ public class MainApp extends Application {
                             _2.isRunningNotEmpty = true;
                             // 设置进程状态
                             p.setStatus(1);
-                        } catch (Exception e) {}
+                        } catch (Exception ignored) {}
                     }
-                    /**
-                     * 后备队列
+                    /*
+                      后备队列
                      */
                     try {
                         List<Process> backQueue = _1.backgroundQueue.getBackQueue();
@@ -166,7 +165,7 @@ public class MainApp extends Application {
                             _1.backgroundQueue.removeBackProcess(p);
                             p.setStatus(0);
                         }
-                    } catch (Exception e) {
+                    } catch (Exception ignored) {
 
                     } finally {
                         _1.refreshTableView();
@@ -183,50 +182,8 @@ public class MainApp extends Application {
         }, 1000, 1100);
     }
 
-    private void runProcess() {
-        try {
-            if (_2.runningProcess == null) {
-                List<Process> readyQueue = memory.getReadyQueue();
-
-                _2.runningProcess = readyQueue.get(0);
-                _2.runningProcess.setStatus(1);
-            }
-        } catch (Exception e) {
-
-        }
-    }
-
-    private void CPU() {
-        try {
-            Process runningProcess = _2.runningProcess;
-            runningProcess.runtimeChangBy(-1);
-            _2.showRunningProcess();
-            if (runningProcess.getRuntime() <= 0) {
-                memory.removeRunningProcess(runningProcess);
-                _4.completionQueue.addCompletionProcess(runningProcess);
-                _2.runningProcess = null;
-            }
-        } catch (Exception e) {
-
-        }
-    }
-
-    private void loadProcess() {
-        try {
-            Process process = _1.backgroundQueue.getBackQueue().get(0);
-            if (memory.addReadyProcess(process, allocateFit)) {
-                _1.backgroundQueue.removeBackProcess(process);
-            }
-        } catch (Exception e) {
-
-        }
-    }
-
     public static void setScheduling(boolean i) {
         scheduling = i;
-    }
-    public static void setAllocateFit(int i) {
-        allocateFit = i;
     }
 
     /**
@@ -267,6 +224,25 @@ public class MainApp extends Application {
         tableView.setItems(processList);
 
         // Confirm button setup
+        Button confirmButton = getConfirmButton(tableView, processStage);
+
+        // Cancel button setup
+        Button cancelButton = new Button("取消");
+        cancelButton.setOnAction(event -> processStage.close());
+        HBox btn = new HBox(20);
+        btn.getChildren().addAll(confirmButton,cancelButton);
+        // Layout setup
+        VBox processLayout = new VBox(10, tableView, btn);
+        processLayout.setPadding(new Insets(10));
+
+        Scene processScene = new Scene(processLayout, 400, 300);
+        processStage.setScene(processScene);
+
+        // Show the process window
+        processStage.showAndWait();
+    }
+
+    private Button getConfirmButton(TableView<Process> tableView, Stage processStage) {
         Button confirmButton = new Button("确定");
         confirmButton.setOnAction(e -> {
             Process selectedProcess = tableView.getSelectionModel().getSelectedItem();
@@ -304,29 +280,13 @@ public class MainApp extends Application {
                 _2.setInfo("进程被挂起");
                 _2.refreshTableView();
                 _3.refreshTableView();
-                _4.refreshTableView2();;
+                _4.refreshTableView2();
             } else {
                 System.out.println("No process selected");
             }
             processStage.close(); // Close the process window after confirmation
         });
-
-        // Cancel button setup
-        Button cancelButton = new Button("取消");
-        cancelButton.setOnAction(event -> {
-            processStage.close();
-        });
-        HBox btn = new HBox(20);
-        btn.getChildren().addAll(confirmButton,cancelButton);
-        // Layout setup
-        VBox processLayout = new VBox(10, tableView, btn);
-        processLayout.setPadding(new Insets(10));
-
-        Scene processScene = new Scene(processLayout, 400, 300);
-        processStage.setScene(processScene);
-
-        // Show the process window
-        processStage.showAndWait();
+        return confirmButton;
     }
 
     /**
@@ -366,6 +326,26 @@ public class MainApp extends Application {
         tableView.setItems(processList);
 
         // Confirm button setup
+        Button confirmButton = getButton(tableView, processStage);
+
+        // Cancel button setup
+        Button cancelButton = new Button("取消");
+        cancelButton.setOnAction(event -> processStage.close());
+
+        HBox btn = new HBox(20);
+        btn.getChildren().addAll(confirmButton,cancelButton);
+        // Layout setup
+        VBox processLayout = new VBox(10, tableView, btn);
+        processLayout.setPadding(new Insets(10));
+
+        Scene processScene = new Scene(processLayout, 400, 300);
+        processStage.setScene(processScene);
+
+        // Show the process window
+        processStage.showAndWait();
+    }
+
+    private static Button getButton(TableView<Process> tableView, Stage processStage) {
         Button confirmButton = new Button("确定");
         confirmButton.setOnAction(e -> {
             Process selectedProcess = tableView.getSelectionModel().getSelectedItem();
@@ -387,24 +367,7 @@ public class MainApp extends Application {
             }
             processStage.close(); // Close the process window after confirmation
         });
-
-        // Cancel button setup
-        Button cancelButton = new Button("取消");
-        cancelButton.setOnAction(event -> {
-            processStage.close();
-        });
-
-        HBox btn = new HBox(20);
-        btn.getChildren().addAll(confirmButton,cancelButton);
-        // Layout setup
-        VBox processLayout = new VBox(10, tableView, btn);
-        processLayout.setPadding(new Insets(10));
-
-        Scene processScene = new Scene(processLayout, 400, 300);
-        processStage.setScene(processScene);
-
-        // Show the process window
-        processStage.showAndWait();
+        return confirmButton;
     }
 
     @Override

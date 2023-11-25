@@ -5,20 +5,18 @@ import process.Process;
 import queue.ReadyQueue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Memory {
-    private ReadyQueue readyQueue = new ReadyQueue();
-    ;
-    private List<Process> loadedProcess = new ArrayList<>();
+    private final ReadyQueue readyQueue = new ReadyQueue();
+    private final List<Process> loadedProcess = new ArrayList<>();
 
-    private Integer[] memorySituation = new Integer[64];
+    private final Integer[] memorySituation = new Integer[64];
 
 
     public Memory() {
-        for (int i = 0; i < memorySituation.length; i++) {
-            memorySituation[i] = 0;
-        }
+        Arrays.fill(memorySituation, 0);
         Process OS = new Process("OS", 1000, 100, 5);
         OS.setStatus(0);
         PCB pcb = new PCB(OS, 0);
@@ -44,9 +42,7 @@ public class Memory {
     /**
      * 添加进程到就绪队列，并分配内存
      *
-     * @param process
      * @param mode    0->最先适应算法，1->最优适应算法
-     * @return
      */
     public boolean addReadyProcess(Process process, int mode) {
         int requiredMemory = process.getMemory(); // 获取进程的内存占用大小
@@ -98,8 +94,6 @@ public class Memory {
     /**
      * 返回最小满足进程内存的区间开始下标，否则返回-1
      *
-     * @param requiredMemory
-     * @return
      */
     private int allocateBestFit(int requiredMemory) {
         int bestFitStartIndex = -1;
@@ -129,8 +123,6 @@ public class Memory {
     /**
      * 返回最先找到的内存块的开始下标，否则返回-1
      *
-     * @param requiredMemory
-     * @return
      */
     private int allocateFirstFit(int requiredMemory) {
         int currentBlockSize = 0;
@@ -154,7 +146,6 @@ public class Memory {
      * 让进程退出就绪队列
      * 进程挂起或加入CPU
      *
-     * @param process
      */
     public void removeReadyProcess(Process process) {
         String str = process.getName();
@@ -170,7 +161,7 @@ public class Memory {
             loadedProcess.remove(process);
             System.out.println("Memory:进程" + str + "退出内存");
             freeMemory(process);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
 
         }
     }
@@ -183,13 +174,6 @@ public class Memory {
             memorySituation[i] = 0;
         }
         System.out.println("Memory:进程" + name + "内存已释放," + memoryUsage + "KB");
-    }
-
-    /**
-     * 发生抢占时调用
-     */
-    public void reAddReadyProcess(Process process) {
-        readyQueue.addReadyProcess(process);
     }
 
 }

@@ -24,7 +24,7 @@ import static columnvbox._2.updateData;
  */
 public class _3 extends VBox {
     Label memorySituation = new Label("内存");
-    private TableView<ObservableList<String>> tableView = new TableView<>();
+    private final TableView<ObservableList<String>> tableView = new TableView<>();
     // 创建表格列
     TableColumn<ObservableList<String>, String> rowColumn = new TableColumn<>("Row");
     TableColumn<ObservableList<String>, String> pidColumn = new TableColumn<>("PID");
@@ -32,7 +32,7 @@ public class _3 extends VBox {
     TableColumn<ObservableList<String>, String> usageColumn = new TableColumn<>("占用内存");
     ObservableList<ObservableList<String>> data;
 
-    private Memory memory;
+    private final Memory memory;
     public _3(Memory memory) {
         this.memory = memory;
         // 将列添加到表格中
@@ -56,7 +56,7 @@ public class _3 extends VBox {
         statusColumn.setCellValueFactory(param -> Bindings.stringValueAt(param.getValue(), 2));
         usageColumn.setCellValueFactory(param -> Bindings.stringValueAt(param.getValue(), 3));
         // 设置状态列的单元格工厂
-        statusColumn.setCellFactory(column -> new TableCell<ObservableList<String>, String>() {
+        statusColumn.setCellFactory(column -> new TableCell<>() {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -121,8 +121,7 @@ public class _3 extends VBox {
             }
         }
 
-        int percentage = countOnes * 100 / array.length;
-        return percentage;
+        return countOnes * 100 / array.length;
     }
 
     public void refreshTableView() {
@@ -148,6 +147,6 @@ public class _3 extends VBox {
                     }
                 }
             }
-        } catch (Exception e) {}
+        } catch (Exception ignored) {}
     }
 }

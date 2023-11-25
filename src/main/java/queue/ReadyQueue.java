@@ -11,16 +11,14 @@ import java.util.List;
  * 存储就绪进程
  */
 public class ReadyQueue {
-    private List<Process> readyQueue;
+    private final List<Process> readyQueue;
 
     public ReadyQueue() {
-        readyQueue = new ArrayList<Process>();
+        readyQueue = new ArrayList<>();
     }
 
     /**
      * 只对列表进行操作，仅由主线程调用，同时判断剩余主存是否支持
-     * @param process
-     * @return
      */
     public boolean addReadyProcess(Process process) {
         try {
