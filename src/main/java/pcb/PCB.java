@@ -1,7 +1,9 @@
 package pcb;
 
+import lombok.Getter;
 import process.Process;
 
+@Getter
 public class PCB {
     private int id;
     private Process process;
@@ -21,32 +23,16 @@ public class PCB {
         this.memoryStart = memoryStart;
     }
 
-    public int getId() {
-        return id;
-    }
-
     public void setId(int id) {
         this.id = id;
-    }
-
-    public Process getProcess() {
-        return process;
     }
 
     public void setProcess(Process process) {
         this.process = process;
     }
 
-    public Integer getMemory() {
-        return memory;
-    }
-
     public void setMemory(Integer memory) {
         this.memory = memory;
-    }
-
-    public Integer getMemoryStart() {
-        return memoryStart;
     }
 
     public void setMemoryStart(Integer memoryStart) {

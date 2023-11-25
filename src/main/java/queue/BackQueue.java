@@ -1,13 +1,15 @@
 package queue;
 
 import dao.impl.ProcessDaoImpl;
+import lombok.Getter;
 import process.Process;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class BackQueue{
-    private ProcessDaoImpl dao;
+    private final ProcessDaoImpl dao;
     private List<Process> backQueue;
 
     /**
@@ -15,7 +17,7 @@ public class BackQueue{
      */
     public BackQueue() {
         dao = new ProcessDaoImpl();
-        backQueue = new ArrayList<Process>();
+        backQueue = new ArrayList<>();
     }
     public boolean addBackProcess(Process process) {
         try {

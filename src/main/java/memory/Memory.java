@@ -1,5 +1,6 @@
 package memory;
 
+import lombok.Getter;
 import pcb.PCB;
 import process.Process;
 import queue.ReadyQueue;
@@ -12,6 +13,7 @@ public class Memory {
     private final ReadyQueue readyQueue = new ReadyQueue();
     private final List<Process> loadedProcess = new ArrayList<>();
 
+    @Getter
     private final Integer[] memorySituation = new Integer[64];
 
 
@@ -33,10 +35,6 @@ public class Memory {
 
     public List<Process> getLoadingQueue() {
         return loadedProcess;
-    }
-
-    public Integer[] getMemorySituation() {
-        return memorySituation;
     }
 
     /**

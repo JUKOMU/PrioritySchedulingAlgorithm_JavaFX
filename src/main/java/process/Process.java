@@ -1,15 +1,15 @@
 package process;
 
 
+import lombok.Getter;
 import pcb.PCB;
-
-import java.util.Objects;
 
 /**
  * 进程类
  * id，name，优先级，实时优先级，模拟运行时间，状态
  * 运行时间：CPU时间 + IO时间
  */
+@Getter
 public class Process implements Comparable<Process> {
     static final Integer BACKED = -1;
     static final Integer READY = 0;
@@ -37,56 +37,28 @@ public class Process implements Comparable<Process> {
         this.PCB = new PCB();
     }
 
-    public Integer getId() {
-        return id;
-    }
-
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public Integer getPriority() {
-        return priority;
-    }
-
     public void setPriority(Integer priority) {
         this.priority = priority;
-    }
-
-    public Integer getRuntime() {
-        return runtime;
     }
 
     public void setRuntime(Integer runtime) {
         this.runtime = runtime;
     }
 
-    public Integer getStatus() {
-        return status;
-    }
-
     public void setStatus(Integer status) {
         this.status = status;
     }
 
-    public Integer getMemory() {
-        return memory;
-    }
-
     public void setMemory(Integer memory) {
         this.memory = memory;
-    }
-
-    public pcb.PCB getPCB() {
-        return PCB;
     }
 
     public void setPCB(pcb.PCB PCB) {
@@ -105,7 +77,6 @@ public class Process implements Comparable<Process> {
     /**
      * 按降序排序
      * @param o the object to be compared.
-     * @return
      */
     @Override
     public int compareTo(Process o) {

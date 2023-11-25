@@ -17,7 +17,6 @@ public interface ProcessDao {
 
     /**
      * 删除所有元素
-     * @return
      */
     boolean deleteAllRecords();
 

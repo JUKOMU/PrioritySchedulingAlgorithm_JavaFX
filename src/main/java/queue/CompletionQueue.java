@@ -1,15 +1,17 @@
 package queue;
 
+import lombok.Getter;
 import process.Process;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class CompletionQueue {
-    private List<Process> completionQueue;
+    private final List<Process> completionQueue;
 
     public CompletionQueue() {
-        completionQueue = new ArrayList<Process>();
+        completionQueue = new ArrayList<>();
     }
 
     public boolean addCompletionProcess(Process completionProcess) {
@@ -27,7 +29,4 @@ public class CompletionQueue {
         return false;
     }
 
-    public List<Process> getCompletionQueue() {
-        return completionQueue;
-    }
 }

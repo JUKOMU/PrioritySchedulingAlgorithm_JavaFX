@@ -7,11 +7,14 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DataSourceUtil {
 
     //定义一个数据源
     private static DataSource dataSource;
+    private static final Logger logger = Logger.getLogger(DataSourceUtil.class.getName());
 
     //给datasource赋值
     static {
@@ -29,7 +32,7 @@ public class DataSourceUtil {
             dataSource = com.alibaba.druid.pool.DruidDataSourceFactory.createDataSource(p);
             System.out.println("dataSource:"+dataSource);
         }catch (Exception e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, e.getMessage(), e);
         }
     }
 
@@ -42,7 +45,7 @@ public class DataSourceUtil {
         try {
             conn= dataSource.getConnection();
         }catch (Exception e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return conn;
@@ -53,7 +56,6 @@ public class DataSourceUtil {
      * @param sql  sql语句
      * @param c  实体类对象
      * @param params  给占位符传值的参数
-     * @return
      */
     public <T> List<T> executeQueryList(String sql, Class<T> c, Object... params) {
 
@@ -62,13 +64,13 @@ public class DataSourceUtil {
         //定义语句对象
         PreparedStatement pstmt=null;
         //定义结果集
-        ResultSet rs=null;
+        ResultSet rs;
         //定义一个list
         List<T> dataList=new ArrayList<>();
 
         try {
             //判断sql是否为空
-            if(sql==null || "".equals(sql.trim())) {
+            if(sql==null || sql.trim().isEmpty()) {
                 //直接返回list
                 return dataList;
             }
@@ -116,7 +118,7 @@ public class DataSourceUtil {
 
 
         }catch (Exception e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, e.getMessage(), e);
         }finally {
 
             //关闭数据源
@@ -133,7 +135,7 @@ public class DataSourceUtil {
      * @param params
      */
     public <T> T executeQueryOne(String sql,Class<T> c,Object... params) {
-        return executeQueryList(sql,c,params).size()==0?null:executeQueryList(sql,c,params).get(0);
+        return executeQueryList(sql, c, params).isEmpty() ?null:executeQueryList(sql,c,params).get(0);
     }
 
     public static void close(Connection conn, PreparedStatement pstmt, ResultSet rs) {
@@ -148,7 +150,7 @@ public class DataSourceUtil {
                 rs.close();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, e.getMessage(), e);
         }
     }
 
@@ -165,7 +167,7 @@ public class DataSourceUtil {
         int i=0;
         try {
             //参数校验
-            if(sql==null || "".equals(sql.trim())){
+            if(sql==null || sql.trim().isEmpty()){
                 return 0;
             }
             //获取连接
@@ -178,8 +180,8 @@ public class DataSourceUtil {
             }
             //向mysql发送sql语句，接受结果
             i = st.executeUpdate();
-        } catch (Exception throwables) {
-            throwables.printStackTrace();
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, e.getMessage(), e);
         }finally {
             //释放资源
             DataSourceUtil.close(conn,st,null);
@@ -194,7 +196,7 @@ public class DataSourceUtil {
 
         try {
             // 参数校验
-            if (sql == null || "".equals(sql.trim())) {
+            if (sql == null || sql.trim().isEmpty()) {
                 return 0;
             }
 
@@ -218,8 +220,8 @@ public class DataSourceUtil {
                 generatedKey = generatedKeys.getInt(1);
             }
 
-        } catch (Exception throwables) {
-            throwables.printStackTrace();
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             // 释放资源
             DataSourceUtil.close(conn, st, null);
