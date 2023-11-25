@@ -13,11 +13,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import memory.Memory;
 import process.Process;
@@ -45,7 +43,7 @@ public class _2 extends VBox {
 
     ObservableList<Process> processList;
 
-    private Memory memory;
+    private final Memory memory;
 
     public Process runningProcess; // 运行的进程
 
@@ -67,7 +65,7 @@ public class _2 extends VBox {
         // 将列添加到表格
         tableView.getColumns().addAll(nameColumn, priorityColumn, runtimeColumn, memoryColumn);
         // 创建 Process 对象的列表
-        ObservableList<Process> processList = FXCollections.observableArrayList();
+        processList = FXCollections.observableArrayList();
         // 添加按钮和表格到 VBox
         label1.setFont(new Font(25));
         label1.setPadding(new Insets(10, 10, 10, 10));
@@ -78,10 +76,10 @@ public class _2 extends VBox {
         label4.setFont(new Font(18));
         label4.setPadding(new Insets(2, 2, 2, 14));
 
-        /**
-         * 内存占用折线图
+        /*
+          内存占用折线图
          */
-        NumberAxis xAxis = new NumberAxis(0, MAX_DATA_POINTS, MAX_DATA_POINTS / 10);
+        NumberAxis xAxis = new NumberAxis(0, MAX_DATA_POINTS, (double) MAX_DATA_POINTS / 10);
         NumberAxis yAxis = new NumberAxis(0, 100, 10); // 设置y轴最大值为100
         xAxis.setForceZeroInRange(false);
         xAxis.setAutoRanging(false);
@@ -124,7 +122,7 @@ public class _2 extends VBox {
         }
         String finalMessage = message;
         Platform.runLater(() -> {
-            if (finalMessage.equals("")) {
+            if (finalMessage.isEmpty()) {
                 setInfo("空闲");
             } else {
                 setInfo("调度中  正在运行:");
@@ -149,8 +147,8 @@ public class _2 extends VBox {
                 }
                 points.add(dataPoint);
                 series.getData().clear();
-                for (int i = 0; i < points.size(); i++) {
-                    series.getData().add(points.get(i));
+                for (XYChart.Data<Number, Number> point : points) {
+                    series.getData().add(point);
                 }
             } else {
                 series.getData().add(dataPoint);
