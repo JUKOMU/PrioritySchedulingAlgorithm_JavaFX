@@ -77,4 +77,5 @@ public class _2 extends VBox {
     public void setInfo(String message) {
         Platform.runLater(() -> label3.setText(message));
     }
+
 }
